@@ -106,6 +106,16 @@ import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_DOMINANT_SPEA
 
 public class CustomTwilioVideoView extends View implements LifecycleEventListener, AudioManager.OnAudioFocusChangeListener {
     private static final String TAG = "CustomTwilioVideoView";
+    /*
+     * Audio and video tracks can be created with names. This feature is useful for categorizing
+     * tracks of participants. For example, if one participant publishes a video track with
+     * ScreenCapturer and CameraCapturer with the names "screen" and "camera" respectively then
+     * other participants can use RemoteVideoTrack#getName to determine which video track is
+     * produced from the other participant's screen or camera.
+     */
+    private static final String LOCAL_AUDIO_TRACK_NAME = "mic";
+    private static final String LOCAL_VIDEO_TRACK_NAME = "camera";
+
     private static final String DATA_TRACK_MESSAGE_THREAD_NAME = "DataTrackMessages";
     private static final String FRONT_CAMERA_TYPE = "front";
     private static final String BACK_CAMERA_TYPE = "back";
@@ -320,7 +330,7 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
             return false;
         }
 
-        localVideoTrack = LocalVideoTrack.create(getContext(), enableVideo, cameraCapturer, buildVideoFormat());
+        localVideoTrack = LocalVideoTrack.create(getContext(), enableVideo, cameraCapturer, LOCAL_VIDEO_TRACK_NAME);
         if (thumbnailVideoView != null && localVideoTrack != null) {
             localVideoTrack.addSink(thumbnailVideoView);
         }
@@ -341,7 +351,7 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
              * If the local video track was released when the app was put in the background, recreate.
              */
             if (cameraCapturer != null && localVideoTrack == null) {
-                localVideoTrack = LocalVideoTrack.create(getContext(), isVideoEnabled, cameraCapturer, buildVideoFormat());
+                localVideoTrack = LocalVideoTrack.create(getContext(), isVideoEnabled, cameraCapturer, LOCAL_VIDEO_TRACK_NAME);
             }
 
             if (localVideoTrack != null) {
@@ -443,7 +453,7 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
         this.cameraType = cameraType;
 
         // Share your microphone
-        localAudioTrack = LocalAudioTrack.create(getContext(), enableAudio);
+        localAudioTrack = LocalAudioTrack.create(getContext(), enableAudio, LOCAL_AUDIO_TRACK_NAME);
 
         if (cameraCapturer == null && enableVideo) {
             boolean createVideoStatus = createLocalVideo(enableVideo, cameraType);
