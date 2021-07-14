@@ -6,11 +6,14 @@
  */
 package com.twiliorn.library;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.annotation.StringDef;
+import androidx.annotation.StringDef;
 
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
@@ -57,6 +60,7 @@ public class RNVideoViewGroup extends ViewGroup {
 
                     }
 
+                    @SuppressLint("WrongCall")
                     @Override
                     public void onFrameResolutionChanged(int vw, int vh, int rotation) {
                         synchronized (layoutSync) {
@@ -74,6 +78,11 @@ public class RNVideoViewGroup extends ViewGroup {
                             event.putInt("width", vw);
                             event.putInt("rotation", rotation);
                             pushEvent(RNVideoViewGroup.this, ON_FRAME_DIMENSIONS_CHANGED, event);
+
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                RNVideoViewGroup me = RNVideoViewGroup.this;
+                                me.onLayout(true, me.getLeft(), me.getTop(), me.getRight(), me.getBottom());
+                            });
                         }
                     }
                 }
