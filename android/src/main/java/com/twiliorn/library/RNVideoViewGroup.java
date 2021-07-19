@@ -27,8 +27,6 @@ import tvi.webrtc.VideoFrame;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import static com.twiliorn.library.RNVideoViewGroup.Events.ON_FRAME_DIMENSIONS_CHANGED;
-
 public class RNVideoViewGroup extends ViewGroup {
     private PatchedVideoView surfaceViewRenderer = null;
     private int videoWidth = 0;
@@ -38,7 +36,7 @@ public class RNVideoViewGroup extends ViewGroup {
     private final RCTEventEmitter eventEmitter;
 
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({ON_FRAME_DIMENSIONS_CHANGED})
+    @StringDef({Events.ON_FRAME_DIMENSIONS_CHANGED})
     public @interface Events {
         String ON_FRAME_DIMENSIONS_CHANGED = "onFrameDimensionsChanged";
     }
@@ -77,7 +75,7 @@ public class RNVideoViewGroup extends ViewGroup {
                             event.putInt("height", vh);
                             event.putInt("width", vw);
                             event.putInt("rotation", rotation);
-                            pushEvent(RNVideoViewGroup.this, ON_FRAME_DIMENSIONS_CHANGED, event);
+                            pushEvent(RNVideoViewGroup.this, Events.ON_FRAME_DIMENSIONS_CHANGED, event);
 
                             new Handler(Looper.getMainLooper()).post(() -> {
                                 RNVideoViewGroup me = RNVideoViewGroup.this;
