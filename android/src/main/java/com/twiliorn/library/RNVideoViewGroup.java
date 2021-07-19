@@ -93,8 +93,13 @@ public class RNVideoViewGroup extends ViewGroup {
         return surfaceViewRenderer;
     }
 
+    @SuppressLint("WrongCall")
     public void setScalingType(RendererCommon.ScalingType scalingType) {
         this.scalingType = scalingType;
+        new Handler(Looper.getMainLooper()).post(() -> {
+            RNVideoViewGroup me = RNVideoViewGroup.this;
+            me.onLayout(true, me.getLeft(), me.getTop(), me.getRight(), me.getBottom());
+        });
     }
 
     @Override
